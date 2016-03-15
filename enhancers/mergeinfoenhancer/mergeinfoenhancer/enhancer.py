@@ -85,6 +85,8 @@ class MergeInfoEnhancer(RevtreeEnhancer):
                             revs.sort()
                             srcbrs[srcbr] = revs
                         for srcrange in srcrev.split(','):
+                            if srcrange.endswith('*'):
+                                srcrange = srcrange[0:-1]
                             srcs = srcrange.split('-')
                             s1 = int(srcs[0])
                             s2 = int(len(srcs) > 1 and srcs[1] or srcs[0])
