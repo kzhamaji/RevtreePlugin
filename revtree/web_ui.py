@@ -55,7 +55,7 @@ class RevtreeStore(object):
         self['limits'] = 'limperiod'
         self['style'] = style
         self['branch'] = None
-        self['author'] = self.authname
+        self['author'] = None #self.authname
         self['showdel'] = None
 
     def __getitem__(self, name):
