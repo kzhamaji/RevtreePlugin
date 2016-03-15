@@ -1,0 +1,142 @@
+<!DOCTYPE html 
+    PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"
+    "http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:xi="http://www.w3.org/2001/XInclude" 
+      xmlns:py="http://genshi.edgewall.org/">
+  <xi:include href="layout.html" />
+  <xi:include href="macros.html" />
+  <head>
+    <!-- This document conforms to XHTML + SVG + MathML 
+         However, a tiny issue in Trac (#4614) prevents the validation of
+         the RevtreePlugin documents.
+      -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>${rt.title}</title>
+    <script type="text/javascript">
+    
+    (function($){
+      window.updateLimits = function() {
+        $('#period').enable($('#limperiod').checked());
+        $('#revmin').enable($('#limrev').checked());
+        $('#revmax').enable($('#limrev').checked());
+      }
+    })(jQuery);
+    jQuery(document).ready(function($) {
+      $("#limits input[name='limits']").click(function() { 
+          updateLimits(); 
+      });
+      window.JT_init();
+      window.updateLimits();
+      // the following function is required for Safari to operate properly
+      $(window).unload(function(){JT_hide()});
+    });
+    </script>    
+  </head>
+  <body>
+    <div id="ctxtnav"></div>
+    <div id="content" class="revtree">
+      <h1>${rt.title}</h1>
+      <div id="settings">
+        <form id="prefs" method="get" action="">
+          <div class="revprops">
+            <fieldset id="properties">
+              <legend>
+                <span class="legend">Filters</span>
+              </legend>
+              <div class="field">
+                <label for="branch">Branch</label>
+                <select id="branch" name="branch">
+                  <option py:for="br in rt.branches" value="${br.name}" 
+                          selected="${br.name == rt.branch and 'selected' or None}">${br.label}</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="author">Author</label>
+                <select id="author" name="author">
+                  <option py:for="a in rt.authors" value="${a.name}"
+                          selected="${a.name == rt.author and 'selected' or None}">${a.label}</option>
+                </select>
+              </div>
+            </fieldset>
+          </div>
+          <div class="revprops">
+            <fieldset id="limits">
+              <legend>
+                <span class="legend">Revisions</span>
+              </legend>
+              <div class="field">
+                <input type="radio" id="limperiod" name="limits" value="limperiod" 
+                       checked="${rt.limits == 'limperiod' and 'checked' or None}" />
+                <label for="period">Show last </label>
+                <select id="period" name="period">
+                  <option py:for="prd in rt.periods" value="${prd.name}"
+                          selected="${prd.name == rt.period and 'selected' or None}">${prd.label}</option>
+                </select>
+              </div>
+              <div class="field">
+                <input type="radio" id="limrev" name="limits" value="limrev" 
+                       checked="${rt.limits == 'limrev' or None}" />
+                <label for="revmin">From </label>
+                <select id="revmin" name="revmin">
+                  <option py:for="rev in rt.revisions" value="${rev}"
+                          selected="${rev == rt.revmin and 'selected' or None}">${rev}</option>
+                </select>
+                <label for="revmax">up to </label>
+                <select id="revmax" name="revmax">
+                  <option py:for="rev in rt.revisions" 
+                          selected="${rev == rt.revmax and 'selected' or None}">${rev}</option>
+                </select>
+              </div>
+            </fieldset>
+          </div>
+          <div class="revprops" id="treeoptions">
+            <fieldset>
+              <legend>
+                <span class="legend">Options</span>
+              </legend>
+              <div class="field">
+                <input type="checkbox" id="showdel" name="showdel" 
+                       checked="${rt.showdel and 'checked' or None}" />
+                <label for="showdel">Show deleted branches</label>
+              </div>
+            </fieldset>
+          </div>
+          <div class="revprops" id="treestyle">
+            <fieldset>
+              <legend>
+                <span class="legend">Style</span>
+              </legend>
+              <div class="field">
+                <div>
+                  <input type="radio" id="compact" 
+                         name="style" value="compact" 
+                         checked="${rt.style == 'compact' and 'checked' or None}" />
+                  <label for="compact">Compact</label>
+                </div>
+                <div>
+                  <input type="radio" id="timeline" 
+                         name="style" value="timeline" 
+                         checked="${rt.style == 'timeline' and 'checked' or None}" />
+                  <label for="compact">Timeline</label>
+                </div>
+              </div>
+              <div class="buttons">
+                <input type="submit" value="Update" />
+              </div>
+            </fieldset>
+          </div>
+        </form>
+      </div>
+      <div py:choose="" py:strip="">
+      <div py:when="'errormsg' in rt" id="errormsg" class="error">
+        <p class="message">${rt.errormsg}</p>
+      </div>
+      <div py:otherwise="" class="svg">
+        ${rt.svgstyle}
+        ${rt.svg}
+      </div>
+      </div>
+    </div>
+  </body>
+</html>
