@@ -17,6 +17,8 @@ from revtree.svgview import SvgOperation, SvgGroup
 from trac.core import *
 from trac.util.text import to_unicode
 
+from trac.versioncontrol import NoSuchNode
+
 __all__ = ['MergeInfoEnhancerModule']
 
 
@@ -58,12 +60,20 @@ class MergeInfoEnhancer(RevtreeEnhancer):
             srcmergeprops = []
             if chgsets and chgsets[0].clone:
                 (srev, spath) = branch.source()
-                srcmergeprops = get_merge_info(repos, spath, srev)
+                try:
+                    srcmergeprops = get_merge_info(repos, spath, srev)
+                except NoSuchNode, e:
+                    env.log.error(e)
 
             # find all the changeset that have been created by svnmerge
             mergeops = []
             for chgset in chgsets:
-                mergeprops = get_merge_info(repos, branch.name, chgset.rev)
+                try:
+                    mergeprops = get_merge_info(repos, branch.name, chgset.rev)
+                except NoSuchNode, e:
+                    env.log.error(e)
+                    continue
+
                 # discard all the merge information already set in the source
                 # branch
                 filterprops = [m for m in mergeprops if m not in srcmergeprops]
